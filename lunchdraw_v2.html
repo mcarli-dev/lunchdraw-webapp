@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lunch Draw — Bugatti Rimac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ee;
+    --card: #fff;
+    --accent: #e63329;
+    --accent2: #1a1a1a;
+    --text: #1a1a1a;
+    --muted: #888;
+    --border: #e8e4df;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--accent2);
+    color: #fff;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+
+  .header-sub {
+    font-size: 12px;
+    font-weight: 300;
+    color: #aaa;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .count-badge {
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: var(--muted);
+  }
+
+  .card-body { padding: 20px 24px; }
+
+  /* SIGN UP FORM */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--accent); background: #fff; }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.5; cursor: default; }
+
+  /* PEOPLE LIST */
+  .people-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .person-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .person-name { font-weight: 500; }
+  .person-dept { font-size: 12px; color: var(--muted); }
+
+  .btn-reset {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* DRAWS — full width */
+  .full-width { grid-column: 1 / -1; }
+
+  /* DRAW BUTTON */
+  .draw-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: #fafaf9;
+  }
+
+  .btn-draw {
+    background: var(--accent2);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 11px 24px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-draw:hover { background: #333; }
+  .btn-draw:disabled { opacity: 0.4; cursor: default; }
+
+  .draw-hint {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* PASSWORD MODAL */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 6px;
+    padding: 32px;
+    width: 340px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .modal h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 15px;
+    outline: none;
+    margin-bottom: 12px;
+    letter-spacing: 4px;
+  }
+  .modal input:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 10px; }
+  .btn-cancel {
+    flex: 1; padding: 10px; border-radius: 4px; border: 1px solid var(--border);
+    background: #fff; font-size: 14px; cursor: pointer; color: var(--muted);
+  }
+  .btn-go {
+    flex: 2; padding: 10px; border-radius: 4px; border: none;
+    background: var(--accent2); color: #fff; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px; cursor: pointer;
+  }
+  .modal-error { font-size: 12px; color: var(--accent); margin-bottom: 10px; display: none; }
+
+  /* DRAW RESULTS */
+  .draw-history { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+
+  .draw-month {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .draw-month-header {
+    background: var(--accent2);
+    color: #fff;
+    padding: 10px 16px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .draw-month-header span { font-size: 11px; font-weight: 400; opacity: 0.6; }
+
+  .pairs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .pair-card {
+    background: #fff;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .pair-emoji { font-size: 20px; }
+
+  .pair-names {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .pair-names .divider {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 400;
+    margin: 1px 0;
+  }
+
+  .solo-badge {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* LOADING */
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 14px;
+    grid-column: 1 / -1;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent2);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 200;
+    transform: translateY(60px);
+    opacity: 0;
+    transition: all 0.3s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 640px) {
+    .container { grid-template-columns: 1fr; padding: 20px 16px; }
+    .full-width { grid-column: 1; }
+    header { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Lunch<span>Draw</span></div>
+  <div class="header-sub">Bugatti-Rimac · Monthly Matching</div>
+</header>
+
+<div class="container" id="app">
+  <div class="loading">Loading...</div>
+</div>
+
+<!-- Admin password modal -->
+<div class="overlay" id="pw-overlay">
+  <div class="modal">
+    <h3 id="pw-title">Admin access</h3>
+    <p id="pw-desc">Enter the admin password to run this month's draw.</p>
+    <input type="password" id="pw-input" placeholder="••••••" onkeydown="if(event.key==='Enter')confirmAction()">
+    <div class="modal-error" id="pw-error">Wrong password. Try again.</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closePw()">Cancel</button>
+      <button class="btn-go" id="pw-confirm-btn" onclick="confirmAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BIN_ID    = '69fba516c0954111d8e83fd9';
+const MASTER_KEY = '$2a$10$lvCck3FWmRxS96xWGoaXi.SFvvQyXEDcb2zVO80l9Z2OLuhJ4iSEG';
+const ACCESS_KEY = '$2a$10$I8gpmIDiE5H/XHEJUX3XTu/VLjr.GGVkqGXQATCuJhn17Dap8wgwy';
+const BIN_URL   = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const ADMIN_PW  = 'rimac2026';
+
+let data = { people: [], draws: [] };
+
+// ── API ──────────────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const r = await fetch(BIN_URL + '/latest', {
+      headers: { 'X-Master-Key': MASTER_KEY, 'X-Access-Key': ACCESS_KEY }
+    });
+    const j = await r.json();
+    data = j.record;
+    render();
+  } catch { showToast('Error loading data.'); render(); }
+}
+
+async function save() {
+  await fetch(BIN_URL, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY, 'X-Access-Key': ACCESS_KEY },
+    body: JSON.stringify(data)
+  });
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  const monthLabel = new Date().toLocaleString('en', { month: 'long', year: 'numeric' });
+
+  app.innerHTML = `
+    <!-- Sign up -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Join the draw</div>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label>First name</label>
+          <input type="text" id="f-name" placeholder="Nikola">
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <input type="text" id="f-surname" placeholder="Tesla">
+        </div>
+        <div class="field">
+          <label>Department <span style="font-weight:300;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <input type="text" id="f-dept" placeholder="Engineering, Design...">
+        </div>
+        <button class="btn-primary" onclick="signUp()">Sign me up 🍽️</button>
+      </div>
+    </div>
+
+    <!-- People list -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Participants</div>
+        <div class="count-badge">${data.people.length} registered</div>
+      </div>
+      <div class="card-body">
+        ${data.people.length === 0
+          ? `<div class="empty-state">No one signed up yet.<br>Be the first! 👆</div>`
+          : `<div class="people-list">${data.people.map((p) => `
+            <div class="person-row">
+              <div>
+                <div class="person-name">${p.name}</div>
+                ${p.dept ? `<div class="person-dept">${p.dept}</div>` : ''}
+              </div>
+            </div>`).join('')}
+          </div>`
+        }
+      </div>
+    </div>
+
+    <!-- Draw history -->
+    <div class="card full-width">
+      <div class="card-header">
+        <div class="card-title">Monthly draws</div>
+      </div>
+      <div class="draw-section">
+        <button class="btn-draw" onclick="openPw('draw')" ${data.people.length < 2 ? 'disabled' : ''}>
+          🎲 Draw ${monthLabel}
+        </button>
+        <button class="btn-reset" onclick="openPw('reset')">
+          🔄 Reset month
+        </button>
+        <div class="draw-hint">
+          ${data.people.length < 2
+            ? 'At least 2 participants needed to run a draw.'
+            : `${data.people.length} participants · ${Math.floor(data.people.length / 2)} pairs will be created.${data.people.length % 2 ? ' One person will be in a trio.' : ''}`
+          }
+        </div>
+      </div>
+      <div class="draw-history">
+        ${data.draws.length === 0
+          ? `<div class="empty-state">No draws yet. Run the first one! 🎉</div>`
+          : [...data.draws].reverse().map(d => `
+            <div class="draw-month">
+              <div class="draw-month-header">
+                ${d.month} <span>${d.pairs.length} pairs · ${d.total} participants</span>
+              </div>
+              <div class="pairs-grid">
+                ${d.pairs.map(pair => `
+                  <div class="pair-card">
+                    <div class="pair-emoji">🍽️</div>
+                    <div class="pair-names">
+                      ${pair[0]}
+                      <span class="divider">& </span>
+                      ${pair[1]}
+                      ${pair[2] ? `<span class="divider">& </span>${pair[2]}` : ''}
+                    </div>
+                  </div>`).join('')}
+              </div>
+            </div>`).join('')
+        }
+      </div>
+    </div>
+  `;
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────────────────
+async function signUp() {
+  const name = (document.getElementById('f-name').value.trim() + ' ' + document.getElementById('f-surname').value.trim()).trim();
+  const dept = document.getElementById('f-dept').value.trim();
+  if (!name || name === '') { showToast('Please enter your name.'); return; }
+  if (data.people.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    showToast('You are already signed up!'); return;
+  }
+  data.people.push({ name, dept });
+  await save();
+  render();
+  showToast(`Welcome, ${name}! 🎉`);
+}
+
+function currentMonth() {
+  return new Date().toLocaleString('en', { month: 'long', year: 'numeric' });
+}
+
+let pendingAction = null;
+
+function openPw(action) {
+  pendingAction = action;
+  if (action === 'draw') {
+    document.getElementById('pw-title').textContent = 'Admin access';
+    document.getElementById('pw-desc').textContent = 'Enter the admin password to run this month\'s draw.';
+    document.getElementById('pw-confirm-btn').textContent = 'Run draw';
+  } else {
+    document.getElementById('pw-title').textContent = 'Reset month';
+    document.getElementById('pw-desc').textContent = 'This will delete all draws for the current month. The participant list will stay intact.';
+    document.getElementById('pw-confirm-btn').textContent = 'Reset';
+  }
+  document.getElementById('pw-overlay').classList.add('open');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').style.display = 'none';
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+function closePw() { document.getElementById('pw-overlay').classList.remove('open'); }
+
+async function confirmAction() {
+  const pw = document.getElementById('pw-input').value;
+  if (pw !== ADMIN_PW) {
+    document.getElementById('pw-error').style.display = 'block';
+    return;
+  }
+  closePw();
+  if (pendingAction === 'draw') await runDraw();
+  else if (pendingAction === 'reset') await resetMonth();
+}
+
+async function runDraw() {
+  const shuffled = [...data.people].sort(() => Math.random() - 0.5);
+  const pairs = [];
+  for (let i = 0; i < shuffled.length - 1; i += 2) {
+    const pair = [shuffled[i].name, shuffled[i+1].name];
+    if (i + 2 === shuffled.length - 1) {
+      pair.push(shuffled[i+2].name);
+      i++;
+    }
+    pairs.push(pair);
+  }
+  data.draws.push({ month: currentMonth(), pairs, total: data.people.length, date: new Date().toISOString() });
+  await save();
+  render();
+  showToast(`🎲 Draw complete! ${pairs.length} pairs created.`);
+}
+
+async function resetMonth() {
+  const month = currentMonth();
+  const before = data.draws.length;
+  data.draws = data.draws.filter(d => d.month !== month);
+  const removed = before - data.draws.length;
+  await save();
+  render();
+  showToast(removed > 0 ? `🔄 Reset done — ${removed} draw(s) removed for ${month}.` : `No draws found for ${month}.`);
+}
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.getElementById('pw-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('pw-overlay')) closePw();
+});
+
+load();
+</script>
+</body>
+</html>
